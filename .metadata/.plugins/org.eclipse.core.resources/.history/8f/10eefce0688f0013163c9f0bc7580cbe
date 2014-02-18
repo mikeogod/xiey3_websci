@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lab2-Weather App</title>
+  <link>
+  <link>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script></script>
+  <script>
+  $(document).ready(function(){
+	  
+	  var my_position=document.getElementById("test");
+	  function getLocation()
+	  {
+	      if (navigator.geolocation)
+	      {
+	          navigator.geolocation.getCurrentPosition(showPosition, showError);
+	      }
+	      else
+	      {
+	          my_position.innerHTML = "Geolocation is not supported by this browser.";
+	      }
+	  }
+	  
+	  function showPosition(position)
+	  {
+	      my_position.innerHTML = "Latitude: " + position.coords.latitude + 
+	      "<br>Longitude: " + position.coords.longitude; 
+	  }
+
+	  function showError(error)
+	  {
+		  switch(error.code) 
+		    {
+		    case error.PERMISSION_DENIED:
+		      x.innerHTML="User denied the request for Geolocation."
+		      break;
+		    case error.POSITION_UNAVAILABLE:
+		      x.innerHTML="Location information is unavailable."
+		      break;
+		    case error.TIMEOUT:
+		      x.innerHTML="The request to get user location timed out."
+		      break;
+		    case error.UNKNOWN_ERROR:
+		      x.innerHTML="An unknown error occurred."
+		      break;
+		    }
+	  }
+
+
+	  //Main Code
+	  
+	  getLocation();
+
+  });
+
+  </script>
+</head>
+
+<body>
+  <p>Hello!</p>
+  <p id="test"></p>
+</body>
+
+</html>
+
+<?php

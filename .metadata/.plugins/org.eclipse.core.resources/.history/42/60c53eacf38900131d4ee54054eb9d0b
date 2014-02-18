@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lab1-HTML5, CSS3, JS</title>
+  <link rel="stylesheet" href="">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(
+    		$.ajax({
+			    url:"tweets.json",
+				type:"GET",
+				ajax: true,
+				dataType: "json",
+				success: function(data, textStatus, jqXHR){
+					alert("Success!");
+					$("#tweets").html(data);
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					alert("Failed! "+textStatus+" "+errorThrown);
+		  	    }
+			})
+	);
+  </script>
+</head>
+<body>
+  <p>Hello</p>
+  <div id="tweets">
+    
+  </div>
+</body>
+<?php

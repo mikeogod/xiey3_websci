@@ -1,0 +1,160 @@
+<!-- apikey: 3378f6c9f75811a6a6b31d2d26f32b2f -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lab2-Weather App</title>
+  <link>
+  <link>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script></script>
+  <script>
+  $(document).ready(function(){
+	  
+	  var my_position=document.getElementById("test");
+	  var lat, lon;
+	  
+	  function getLocation(callback)
+	  {
+	      if (navigator.geolocation)
+	      {
+	          navigator.geolocation.getCurrentPosition(callback, showError);
+	      }
+	      else
+	      {
+	          my_position.innerHTML = "Geolocation is not supported by this browser.";
+	      }
+	  }
+	  
+	  function showPositionText(position)
+	  {
+	      my_position.innerHTML = "Latitude: " + position.coords.latitude + 
+	      "<br>Longitude: " + position.coords.longitude; 
+	  }
+
+	  function showPositionMap(position)
+	  {
+	  	  var latlon = position.coords.latitude + "," + position.coords.longitude;
+
+	 	  var img_url = "http://maps.googleapis.com/maps/api/staticmap?center="+latlon+"&zoom=14&size=400x300&sensor=false";
+
+	  	  document.getElementById("mapholder").innerHTML = "<img src='"+img_url+"'>";
+	  }
+
+	  function showError(error)
+	  {
+		  switch(error.code) 
+		    {
+		    case error.PERMISSION_DENIED:
+		      my_position.innerHTML="User denied the request for Geolocation."
+		      break;
+		    case error.POSITION_UNAVAILABLE:
+		      my_position.innerHTML="Location information is unavailable."
+		      break;
+		    case error.TIMEOUT:
+		      my_position.innerHTML="The request to get user location timed out."
+		      break;
+		    case error.UNKNOWN_ERROR:
+		      my_position.innerHTML="An unknown error occurred."
+		      break;
+		    }
+	  }
+
+	  function printToTmp(object, depth)
+	  {
+		  var output="";
+		  for(key in object)
+		  {
+			  if(!$.isPlainObject(object[key]))
+			  {
+				  if((typeof object[key])=="object")
+				  {
+					  var d="";
+					  for(var i=0; i!=depth; i++)
+					  {
+						  d+="--";
+					  }
+				  	  
+					  for(var i=; i!=object[key].length; i++)
+					  {
+						  output+="<p>"+d+printToTmp(object[key][i], depth+1)+"</p>";
+					  }
+					  
+				  }
+				  else
+				  {
+					  var d="";
+					  for(var i=0; i!=depth; i++)
+					  {
+						  d+="--";
+					  }
+				  	  output+="<p>"+d+key+": "+object[key]+"</p>";
+				  }
+			  }
+			 
+			  else
+			  {
+				  
+				  output+="<p>"+key+"</p>"+printToTmp(object[key], depth+1);
+			  }
+		  }
+
+		  if(depth==0)
+		  {
+		  	  $("#tmp").html(output);
+		  }
+		  else
+		  {
+			  return output;
+		  }
+	  }
+
+	  //Main Code
+	  getLocation(Main);
+
+	  function Main(position)
+	  {
+		  lat=position.coords.latitude;
+		  lon=position.coords.longitude;
+		  
+		  showPositionText(position);
+		  showPositionMap(position);
+		  $.ajax({
+		  	  url:"http://openweathermap.org/data/2.5/weather?lat="+lat.toString()+"&lon="+lon.toString(),
+		  	  type:"GET",
+		  	  dataType:"jsonp",
+		  	  data:"",
+		  	  headers:{"x-api-key":"3378f6c9f75811a6a6b31d2d26f32b2f"}, 
+		  	  ajax:true,
+		  	  success:function(data, textStatus, jqXHR){
+			  	  for (key in data)
+			  	  {
+				  	  printToTmp(data, 0);
+			  	  }
+
+			  	  var city_name=data["name"];
+			  	  var wind_speed=data["wind"]["speed"];
+			  	  var humidity=data["main"]["humidity"];
+			  	  
+			  },
+		  	  error:function(jqXHR, textStatus, errorThrown){
+	              
+			  }
+		  });
+	  }
+	  
+	  
+  });
+
+  </script>
+</head>
+
+<body>
+  <p>Hello!</p>
+  <p id="test"></p>
+  <div id="tmp"></div>
+  <div id="mapholder"></div>
+</body>
+
+</html>
+
+<?php

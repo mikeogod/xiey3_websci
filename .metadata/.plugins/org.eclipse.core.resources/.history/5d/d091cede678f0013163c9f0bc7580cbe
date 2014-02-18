@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lab2-Weather App</title>
+  <link>
+  <link>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script></script>
+  <script>
+  
+  function getLocation(nodename)
+  {
+	  var my_position=document.getElementById(nodename);
+      if (navigator.geolocation)
+      {
+          navigator.geolocation.getCurrentPosition(showPosition);
+      }
+      else
+      {
+          my_position.innerHTML = "Geolocation is not supported by this browser.";
+      }
+  }
+  
+  function showPosition(position)
+  {
+      my_position.innerHTML = "Latitude: " + position.coords.latitude + 
+      "<br>Longitude: " + position.coords.longitude; 
+  }
+
+  getLocation("test");
+
+  </script>
+</head>
+
+<body>
+  <p>Hello!</p>
+  <p id="test"></p>
+</body>
+
+</html>
+
+<?php

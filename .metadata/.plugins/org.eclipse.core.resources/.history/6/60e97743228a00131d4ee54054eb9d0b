@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lab1-HTML5, CSS3, JS</title>
+  <link rel="stylesheet" href="">
+  <style>
+    #tweets {
+    	border: solid blue;
+    	width: 50%;
+    	height: 600px;
+    	position: relative;
+    	left: 10%;
+    	right: 40%;
+    	overflow: hidden;
+    }
+    
+    #tweets ul li{
+    	list-style: none;
+    	border: solid red;
+    	position: absolute;
+    	width: 100%;
+    	height: 20%;
+    }
+    
+  </style>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+    function grab_next_tweet(current_index, tweets)
+    {
+        //created_at, text, user, place, entities
+        var output="<li>";
+       	
+        output+="<p>Created at: "+tweets[current_index]["created_at"]+"<p>";
+        output+="<p>Text: "+tweets[current_index]["text"]+"<p>";
+        output+="<p>User name: "+tweets[current_index]["user"]["name"]+"<p>";
+        output+="<img width='100' height='100' src='"+tweets[current_index]["user"]["profile_image_url"]+"' alt='profile image' >";
+        
+        
+        if(tweets[current_index]["place"]!=null)
+        {
+        	output+="<p>"+tweets[current_index]["place"]["full_name"]+"<p>";
+        }
+		output+="</li>";
+
+		var tweet_h=document.getElementById("tweets").getAttribute("height");
+		
+		alert(tweet_h);
+
+		if($("#tweets ul li").length==0)
+		{
+			$("#tweets ul").prepend(output).hide().fadeIn(400);
+		}
+		else
+		{
+	        $("#tweets ul li").each(function(i){
+		        $(this).animate({top: "+=225"}, 1000, "swing", function(){
+					if(i==0)
+					{
+						$("#tweets ul").prepend(output);
+			    		$("#tweets ul li:first-child").hide();
+			        	$("#tweets ul li:first-child").fadeIn(400);
+					}
+			        
+		        	if($("#tweets ul li").length > 3)
+		            {
+		        		$("#tweets ul li:last-child").fadeOut(400, function(){
+		        			$(this).remove();
+		            	});
+		            }
+	        	});
+	        });
+		}
+        
+
+    }
+    $(document).ready(function(){
+  
+    		$.ajax({
+			    url:"tweets.json",
+				type:"GET",
+				ajax: true,
+				dataType: "json",
+				success: function(data, textStatus, jqXHR){
+					var str="";
+					for(field in data[0])
+					{
+						str+="<p>"+field+"</p>";
+						if($.isPlainObject(data[0][field]))
+						{
+							for(sub_field in data[0][field])
+							{
+								str+=("<p> -- "+sub_field+"</p>");
+							}
+						}
+					}
+					$("#tmp").html(str);
+
+					var num=0;
+		    		window.setInterval(function(){
+		        		grab_next_tweet(num, data);
+		        		num++;
+		        		if(num==150)
+		        		{
+			        		num=0;
+		        		}
+		        	}, 3000);
+					
+					/*for(var i=0; i!=data.length; i++)
+					{
+						
+					}
+					$("#tweets").html(data[0]["created_at"]);*/
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					alert("Failed! "+textStatus+" "+errorThrown);
+		  	    }
+			})
+    });
+  </script>
+</head>
+<body>
+  <p>Hello</p>
+  <div id="tmp"></div>
+  <div id="tweets">
+    <ul>
+      
+    </ul>
+  </div>
+</body>
+<?php

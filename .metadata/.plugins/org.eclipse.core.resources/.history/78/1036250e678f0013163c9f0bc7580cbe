@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lab2-Weather App</title>
+  <link>
+  <link>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script></script>
+  <script></script>
+</head>
+
+<body>
+  <p>Hello!</p>
+</body>
+
+</html>
+
+<?php
