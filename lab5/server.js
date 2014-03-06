@@ -31,7 +31,7 @@ twit.stream('statuses/filter', {'locations':sw +','+ne},
 function(stream) {
   stream.on('data', function(new_tweet) {
     console.log("One tweet came in");
-    var old_content_str=fs.readFileSync('lab4-MikeXie-661058666.json', {encoding:'utf-8', flag: 'r'});
+    var old_content_str=fs.readFileSync('lab5-MikeXie-661058666.json', {encoding:'utf-8', flag: 'r'});
     old_content_str=old_content_str.trim();
     if(old_content_str=='')
     {
