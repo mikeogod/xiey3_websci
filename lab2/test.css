@@ -1,0 +1,11 @@
+header {
+  width: 980px;
+  height: 80px; }
+  header nav ul {
+    list-style: none;
+    padding: none;
+    margin: none; }
+  header nav li {
+    display: inline; }
+    header nav li a {
+      text-decoration: none; }

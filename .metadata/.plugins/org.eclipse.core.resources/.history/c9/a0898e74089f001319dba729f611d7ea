@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.1/jquery.mobile-1.4.1.min.css" />
+  
+  <style>
+  @media screen and (min-width: 1080px)
+  {
+  	  .responsive_width{
+  	  	  width:40%;
+  	  	  margin-left:auto;
+  	  	  margin-right:auto;
+  	  }
+  }
+  
+  @media screen and (min-width: 600px)
+  {
+  	  .responsive_width{
+  	  	  width:80%;
+  	  	  margin-left:auto;
+  	  	  margin-right:auto;
+  	  }
+  }
+  
+  a, button {
+  	  margin-left: auto;
+  	  margin-right:auto;
+  }
+  #login_button, #logout_button, #get_data{
+  	  display:none;
+  }
+  
+  </style>
+  
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.4.1/jquery.mobile-1.4.1.min.js"></script>
+  <script src="utility.js"></script>
+  <script>
+  //Facebook Login
+  var access_token;
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '722200331145073',
+    status     : true, // check login status
+    cookie     : true, // enable cookies to allow the server to access the session
+    xfbml      : true  // parse XFBML
+  });
+
+  FB.getLoginStatus(function(response){
+  	  if(response["status"]=="connected")
+  	  {
+  	  	  $("#login_button").hide();
+  	  	  $("#logout_button").show();
+  	  	  $("#get_data").show();
+  	  }
+  	  else
+  	  {
+  	  	  alert("You need to login to facebook before using this app");
+  	  	  $("#login_button").show();
+  	  	  $("#logout_button").hide();
+  	  	  $("#get_data").hide();
+  	  }
+  });
+  
+
+  // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
+  // for any authentication related change, such as login, logout or session refresh. This means that
+  // whenever someone who was previously logged out tries to log in again, the correct case below 
+  // will be handled. 
+  FB.Event.subscribe('auth.authResponseChange', function(response) {
+    // Here we specify what we do with the response anytime this event occurs. 
+    if (response.status === 'connected') {
+      // The response object is returned with a status field that lets the app know the current
+      // login status of the person. In this case, we're handling the situation where they 
+      // have logged in to the app.
+      $("#login_button").hide();
+      $("#logout_button").show();
+      $("#get_data").show();
+      access_token=response["authResponse"]["accessToken"];
+      
+    }else {
+      FB.login();
+    }
+  });
+  };
+
+  // Load the SDK asynchronously
+  (function(d){
+   var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement('script'); js.id = id; js.async = true;
+   js.src = "//connect.facebook.net/en_US/all.js";
+   ref.parentNode.insertBefore(js, ref);
+  }(document));
+
+  // Here we run a very simple test of the Graph API after login is successful. 
+  // This testAPI() function is only called in those cases. 
+  function testAPI() {
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Good to see you, ' + response.name + '.');
+    });
+  }
+
+  function login()
+  {
+	  FB.login(function(response){
+	  });
+  }
+
+  function logout()
+  {
+	  FB.logout();
+	  $("#login_button").show();
+	  $("#logout_button").hide();
+	  $("#get_data").hide();
+  }
+  
+  $(document).ready(function(){  
+    $( document ).on( "mobileinit", function() {
+	  $.mobile.loader.prototype.options.text = "loading";
+	  $.mobile.loader.prototype.options.textVisible = false;
+	  $.mobile.loader.prototype.options.theme = "a";
+	  $.mobile.loader.prototype.options.html = "";
+	});
+  
+    $(document).on( "click", ".loading", function() {
+	  theme = $.mobile.loader.prototype.options.theme,
+	  msgText = $.mobile.loader.prototype.options.text,
+	  textVisible = $.mobile.loader.prototype.options.textVisible,
+	  textonly = false;
+	  html = $.mobile.loader.prototype.options.html;
+	  $.mobile.loading( 'show', {
+	    text: msgText,
+	    textVisible: textVisible,
+	    theme: theme,
+	    textonly: textonly,
+	    html: html
+	  });
+
+	  
+	  $.ajax({
+		url:"https://graph.facebook.com/me?fields=id,name,bio,birthday,address,education,email,age_range,favorite_teams,favorite_athletes",
+		type:"GET",
+		dataType:"",
+		data:{access_token: access_token},
+		
+		ajax:true,
+		success: function(data, textStatus, jqXHR){
+			var name="", bio="", bday="", address="";
+			var list="";
+			if(data["name"]!=null)
+			{
+				name=data["name"];
+				list+="<li>Name: "+name+"</li>";
+			}
+			if(data["bio"]!=null)
+			{
+				bio=data["bio"];
+				list+="<li>bio: "+bio+"</li>";
+			}
+			if(data["birthday"]!=null)
+			{
+				bday=data["birthday"];
+				list+="<li>birthday: "+birthday+"</li>";
+			}
+			if(data["address"]!=null)
+			{
+				address=data["address"];
+				list+="<li>address: "+address+"</li>";
+			}
+			
+			var content=document.getElementById("data");
+			content.innerHTML="<ul>"+list+"</ul>";
+	    },
+		error: function(jqXHR, textStatus, errorThrown){
+			alert("failed: "+textStatus+" "+errorThrown+" "+jqXHR.responseText);
+		},
+		complete: function(jqXHR, textStatus){
+			$.mobile.loading("hide");
+		}
+	  });
+	});
+  });
+
+  
+
+</script>
+
+<!--
+  Below we include the Login Button social plugin. This button uses the JavaScript SDK to
+  present a graphical Login button that triggers the FB.login() function when clicked. -->
+
+  <title>Lab4 - jQuery Mobile</title>
+</head>
+<body>
+  <div class="main" data-role="page" data-position="fixed" data-fullscreen="true">
+    <div data-role="header">
+      <h1>Header</h1>
+      <div id="fb-root"></div>
+    </div>
+        
+    <div class="content" data-role="content">
+      <h2>Content</h2>
+      <div id="tmp"></div>
+      <div id="data"></div>
+      
+      <div class="responsive_width"><button id="login_button" onclick="login()" data-inline="false">Login to Facebook</button></div>
+      <div class="responsive_width"><button id="logout_button" onclick="logout()" data-inline="false">Logout</button></div>
+      <div class="responsive_width"><button id="get_data" class="loading responsive_width" data-inline="false">Get my facebook data</a></button></div>
+    </div>
+        
+    <div class="footer" data-role="footer" data-position="fixed" data-fullscreen="true">
+      <h1>Footer</h1>
+    </div>
+  </div>
+</body>
+</html>

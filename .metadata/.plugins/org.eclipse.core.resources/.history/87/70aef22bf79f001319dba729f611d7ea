@@ -1,0 +1,26 @@
+var twitter = require('ntwitter');
+
+var twit = new twitter({
+  consumer_key: 'www',
+  consumer_secret: 'xxx',
+  access_token_key: 'yyy',
+  access_token_secret: 'zzz'
+});
+
+var http=require('http');
+
+http.createServer(function(request, response) {
+   response.writeHead(200, {
+      'Content-type': 'text/plain'
+   });
+   response.end('Hello HTTP!');
+}).listen(8000);
+console.log('Listening on http://127.0.0.1:8000');
+
+var sw='-73.68,42.72', ne='-73.67,42.73'; //  RPI
+twit.stream('statuses/filter', {'locations':sw +','+ne},
+function(stream) {
+  stream.on('data', function (data) {
+    console.log(data);
+  });
+});

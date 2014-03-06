@@ -1,3 +1,57 @@
+<?php 
+$curl=curl_init();
+//$url="http://openweathermap.org/data/2.5/weather?lat=42.7299661&lon=-73.6767256";
+$url="api.openweathermap.org/data/2.5/forecast?q=Troy,us";
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+$data=json_decode(curl_exec($curl), true);
+$data=array_slice($data["list"], 0, 5);
+$output="";
+
+$address='xiey3@rpi.edu';
+$reply_to='xiey3@rpi.edu';
+$headers='From: My Weather Alert'. "\r\n". "Reply-To: $reply_to";
+$subject="Weather Alert";
+$rain=false;
+$snow=false;
+foreach($data as $item)
+{
+	if(isset($item["rain"]) && (int)$item["rain"]["3h"] > 0)
+	{
+		$rain=true;
+	}
+	if(isset($item["snow"]) && (int)$item["snow"]["3h"] > 0)
+	{
+		$snow=true;
+	}
+}
+if($rain)
+{
+
+	$output.="Watch out for the rain today! \n";
+}
+else
+{
+	$output.="There's no rain today! \n";
+}
+if($snow)
+{
+	$output.="Watch out for the snow today! \n";
+	
+}
+else
+{
+	$output.="There's no snow today! \n";
+}
+
+if($snow || $rain)
+{
+	$mail_sent=mail($address, $subject, $output, $headers);
+}
+
+curl_close($curl);
+?>
+
 <!-- apikey: 3378f6c9f75811a6a6b31d2d26f32b2f -->
 <!DOCTYPE html>
 <html>
@@ -8,7 +62,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <link>
   <link>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
@@ -324,7 +377,6 @@
       </div>
     </div>
   </div>
-  
 </body>
 
 </html>
